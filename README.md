@@ -1,6 +1,6 @@
 # 🌍 European Renewable Power Plants Dashboard
 
- **Live App**: https://resource-watch-renewables-italy-fjbntln3ky9zrct8j7uqzz.streamlit.app/
+ **Live App**: https://resource-watch-renewables.streamlit.app/
 
 An interactive web application to explore renewable power plants across Europe, built using real-world geospatial data and deployed with Streamlit.
 
