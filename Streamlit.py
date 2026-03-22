@@ -1,10 +1,10 @@
-
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import os
 
+
+st.set_page_config(layout="wide")
 
 access_key=os.getenv("AWS_ACCESS_KEY_ID")
 
@@ -32,6 +32,11 @@ def load_data(bucket_name,access_key,aws_s3_key):
 
 df = load_data(bucket_name,access_key,aws_s3_key)
 
+df['renewables']='Non renewables'
+
+df.loc[df['primary_fuel'].isin(['Wind','Solar','Hydro']),'renewables']='Renewables'
+
+
 st.title("European Power Plants Dashboard")
 
 # =========================
@@ -40,7 +45,7 @@ st.title("European Power Plants Dashboard")
 countries = st.sidebar.multiselect(
     "Select countries",
     df["country"].unique(),
-    default=df["country"].unique()
+    default='ITA'
 )
 
 fuels = st.sidebar.multiselect(
@@ -70,35 +75,81 @@ col3.metric("Avg Capacity (MW)", round(df_filtered["capacity_mw"].mean(), 2))
 # =========================
 st.subheader("Map")
 
-        
-fig_map = px.scatter_mapbox(
-    df_filtered,
-    lat="latitude",
-    lon="longitude",
-    size="capacity_mw",
-    color="primary_fuel",
-    hover_name="name",
-    zoom=3,
-    height=500
-)
+col1,col2=st.columns(2, gap="small")
 
-fig_map.update_layout(mapbox_style="carto-positron")
+map_style=st.sidebar.selectbox('Select Map style', [
+    "carto-positron",
+    "carto-darkmatter",
+    "open-street-map",
+    "white-bg"
+],index=0)
 
-st.plotly_chart(fig_map, use_container_width=True)
-
-# =========================
-# CAPACITÀ PER PAESE
-# =========================
-
-df_country = df_filtered.groupby(["country","primary_fuel"])["capacity_mw"].sum().reset_index()
-
-st.subheader("Capacity by Country")
-
-fig_bar = px.bar(
-    df_country,
-    x="country",
-    y="capacity_mw",
-    color="primary_fuel"
-)
-
-st.plotly_chart(fig_bar, use_container_width=True)
+with col1:
+            
+    fig_map = px.scatter_mapbox(
+        df_filtered,
+        lat="latitude",
+        lon="longitude",
+        size="capacity_mw",
+        color="primary_fuel",
+        hover_name="name",
+        zoom=3,
+        height=500
+    )
+    
+    fig_map.update_layout(mapbox_style=map_style)
+    
+    st.plotly_chart(fig_map, use_container_width=True)
+    
+    # =========================
+    # CAPACITÀ PER PAESE
+    # =========================
+    
+    df_country = df_filtered.groupby(["country","primary_fuel"])["capacity_mw"].sum().reset_index()
+    
+    st.subheader("Capacity by Country")
+    
+    fig_bar = px.bar(
+        df_country,
+        x="country",
+        y="capacity_mw",
+        color="primary_fuel"
+    )
+    
+    st.plotly_chart(fig_bar, use_container_width=True)
+    
+with col2:
+    
+    
+    
+    fig_map = px.scatter_mapbox(
+        df_filtered,
+        lat="latitude",
+        lon="longitude",
+        size="capacity_mw",
+        color="renewables",
+        hover_name="name",
+        zoom=3,
+        height=500
+    )
+    
+    fig_map.update_layout(mapbox_style=map_style)
+    
+    st.plotly_chart(fig_map, use_container_width=True)
+    
+    # =========================
+    # CAPACITÀ PER PAESE
+    # =========================
+    
+    df_country = df_filtered.groupby(["country","renewables"])["capacity_mw"].sum().reset_index()
+    
+    st.subheader("Capacity by Country")
+    
+    fig_bar = px.bar(
+        df_country,
+        x="country",
+        y="capacity_mw",
+        color="renewables"
+    )
+    
+    st.plotly_chart(fig_bar, use_container_width=True)
