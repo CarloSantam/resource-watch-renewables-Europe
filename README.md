@@ -1,4 +1,4 @@
-# 🌍 European Power Plants Dashboard
+# Power Plants Dashboard
 
  **Live App**: https://resource-watch-renewables.streamlit.app/
 
