@@ -23,7 +23,6 @@ GEOSTORE_URL = "https://api.resourcewatch.org/v1/geostore"
 DATASET_ID = "a86d906d-9862-4783-9e30-cdb68cd808b8"
 QUERY_URL = f"https://api.resourcewatch.org/v1/query/{DATASET_ID}"
  
-OUTPUT_FILE = "italy_wind_solar_plants.csv"
  
 headers = {
     "Authorization": f"Bearer {JWT}",
@@ -146,14 +145,3 @@ df_.to_csv(
 )
 
 
-Merge = pd.read_csv(
-    f"s3://{bucket_name}/Data/data_tot.csv",
-    
-    storage_options={
-       "key": f"{access_key}",
-       "secret": f"{aws_s3_key}",
-       "client_kwargs": {
-           "region_name": "eu-west-1"
-       }
-       }
-    )
