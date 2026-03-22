@@ -1,3 +1,4 @@
+
 import os
 import requests
 import pandas as pd
@@ -15,7 +16,6 @@ if not JWT or not API_KEY:
 GEOSTORE_URL = "https://api.resourcewatch.org/v1/geostore"
 DATASET_ID = "a86d906d-9862-4783-9e30-cdb68cd808b8"
 QUERY_URL = f"https://api.resourcewatch.org/v1/query/{DATASET_ID}"
- 
  
 headers = {
     "Authorization": f"Bearer {JWT}",
@@ -95,23 +95,14 @@ def fetch_data(country):
     
     return df
 
-EUROPE_MAJOR = [
-    "DEU",  # Germany
-    "FRA",  # France
-    "ITA",  # Italy
-    "ESP",  # Spain
-    "GBR",  # United Kingdom
-    "NLD",  # Netherlands
-    "BEL",  # Belgium
-    "POL",  # Poland
-    "SWE",  # Sweden
-    "NOR",  # Norway
-    "DNK",  # Denmark
-    "FIN"   # Finland
-]
+
+url = "https://api.github.com/repos/johan/world.geo.json/contents/countries"
+files = requests.get(url).json()
+
+countries = [f["name"].replace(".geo.json", "") for f in files]
 
 df_=pd.DataFrame([])    
-for country in EUROPE_MAJOR:
+for country in sorted(countries):
     df=fetch_data(country)
     df['country']=country
     df_=pd.concat([df,df_])
@@ -135,5 +126,4 @@ df_.to_csv(
     }
 
 )
-
 
