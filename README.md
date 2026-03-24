@@ -65,3 +65,7 @@ The dataset includes:
 - Streamlit
 - Plotly
 - AWS S3
+
+## Future plans
+
+- To integrate and compare the current results with other sources as well 
